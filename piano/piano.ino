@@ -2,7 +2,7 @@
 #include "notes.h"
 
 // Define tempo entre clique milissegundo
-#define TEMPO_ENTRE_CLIQUE 500
+#define TEMPO_ENTRE_CLIQUE 350
 
 // Define o tempo do blink
 #define TEMPO_BLINK 500
@@ -61,10 +61,10 @@ void setup() {
   
   // Inicializa os pinos
   pinMode(PIN_BUZZER, OUTPUT);
-  pinMode(PIN_BOTAO_VERMELHO, INPUT);
-  pinMode(PIN_BOTAO_AZUL, INPUT);
   pinMode(PIN_LED_BOTAO_AZUL, OUTPUT);
   pinMode(PIN_LED_BOTAO_VERMELHO, OUTPUT);
+  pinMode(PIN_BOTAO_VERMELHO, INPUT_PULLUP);
+  pinMode(PIN_BOTAO_AZUL, INPUT_PULLUP);
 
   // Inicializa a comunicação serial
   Serial.begin(115200);
@@ -82,17 +82,17 @@ void loop() {
   // Reseta o pino selecionado
   if (pinoLeitura > 3) {
     pinoLeitura = 0;
-    //Serial.write('\n');
+    Serial.write('\n');
   }
 
   // Insere o separador caso não seja o primeiro valor
   if(pinoLeitura != 0) {
-    //Serial.write(',');
+    Serial.write(',');
   }
 
   // Lê um pino da entrada analógica
   const unsigned int leituraAnalogica = constrain(analogRead(pinosPiano[pinoLeitura]), 0, 1023);
-  //Serial.print(leituraAnalogica);
+  Serial.print(leituraAnalogica);
 
   // Conjunto de notas
   const boolean pinoLidoNotasEscolhidas = !digitalRead(PIN_BOTAO_AZUL);
@@ -101,8 +101,6 @@ void loop() {
   if (pinoLidoNotasEscolhidas && (tempoAtual - tempoAnteriorNotas) > TEMPO_ENTRE_CLIQUE) {
     tempoAnteriorNotas = tempoAtual;
     notasEscolhidas = !notasEscolhidas;
-    Serial.print("Notas Escolhidas");
-    Serial.println(notasEscolhidas);
   }
 
   // Define o estado led
